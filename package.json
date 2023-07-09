@@ -22,7 +22,9 @@
   },
   "homepage": "https://github.com/efogerson1/svg-logo-maker#readme",
   "dependencies": {
-    "inquirer": "^8.2.4",
+    "inquirer": "^8.2.4"
+  },
+  "devDependencies": {
     "jest": "^29.6.1"
   }
 }
