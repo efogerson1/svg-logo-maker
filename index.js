@@ -7,7 +7,7 @@ const { Triangle, Circle, Square } = require('./lib/shapes');
 const shapeChoices = ['Triangle', 'Circle', 'Square'];
 
 async function promptUser() {
-  const { shape, color, text } = await inquirer.prompt([
+  const { shape, color, text, textColor } = await inquirer.prompt([
     {
       type: 'list',
       name: 'shape',
@@ -17,7 +17,7 @@ async function promptUser() {
     {
       type: 'input',
       name: 'color',
-      message: 'Enter the color (color keyword or hexadecimal number):',
+      message: 'Enter the shape color (color keyword or hexadecimal number):',
     },
     {
       type: 'input',
@@ -25,6 +25,11 @@ async function promptUser() {
       message: 'Enter up to three characters to include in the SVG (leave empty for no text):',
       validate: (input) => input.length <= 3 || 'Enter up to three characters only',
     },
+    {
+      type: 'input',
+      name: 'textColor',
+      message: 'Enter the color of the text you would like to use:',
+    }
   ]);
 
   let selectedShape;
@@ -44,20 +49,14 @@ async function promptUser() {
   }
 
   selectedShape.setColor(color);
+  selectedShape.setText(text);
+  selectedShape.setTextColor(textColor);
   const svgContent = selectedShape.render();
-
-  let svgWithText = svgContent;
-  if (text) {
-    const textPositionX = selectedShape instanceof Circle ? 150 : 100;
-    const textPositionY = selectedShape instanceof Square ? 275 : 225;
-    const textSVG = `<text x="${textPositionX}" y="${textPositionY}" text-anchor="middle">${text}</text>`;
-    svgWithText = svgContent.slice(0, -2) + textSVG + svgContent.slice(-2);
-  }
 
   const fileName = `${shape.toLowerCase()}-${color.replace('#', '')}-${text}.svg`;
   const filePath = `examples/${fileName}`;
 
-  fs.writeFile(filePath, svgWithText, (err) => {
+  fs.writeFile(filePath, svgContent, (err) => {
     if (err) {
       console.error('Error creating SVG file:', err);
     } else {
